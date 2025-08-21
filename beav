@@ -553,6 +553,33 @@ if $agrobacterium_run; then
 	nhmmer --tblout "$strain".leftborder $BEAV_DIR/models/T-DNA_leftborder.hmm bakta/"$strain".fna >> borders.log 
 	nhmmer --tblout "$strain".rightborder $BEAV_DIR/models/T-DNA_rightborder.hmm bakta/"$strain".fna >> borders.log
 	nhmmer --tblout "$strain".overdrive $BEAV_DIR/models/overdrive.hmm bakta/"$strain".fna >> borders.log
+	#$BEAV_DIR/databases/more_T-DNA_borders.fna
+
+	#identify T-DNA borders that the HMMs miss
+	while read line; do
+		contig=`echo -e "$line" | cut -f 1`
+		startpos=`echo -e "$line" | cut -f 4`
+		endpos=`echo -e "$line" | cut -f 5`
+		strand=`echo -e "$line" | cut -f 7`
+		note=`echo -e "$line" | sed 's/^.*pat //g'`
+		if [[ $note == *"mismatch"* ]]; then
+			#probably a degraded/partial border, only keep if nothing better
+			evalue=0.05
+		elif [[ $note == *"T-DNA_right_border__invariable"* ]]; then
+			#right border invariable positions are minimal score
+			evalue=0.049
+		elif [[ $note == *"T-DNA_left_border__invariable"* ]]; then
+			#left border invariable is more specific
+			evalue=0.048
+		else
+			#perfect match to known border
+			evalue=0
+		fi
+		bordertype=`echo -e "$note" | sed 's/__.*mismatch 1/_partial/g;s/__.*//g'`
+		echo -e "$contig	-	$bordertype	-	1	25	$startpos	$endpos	$startpos	$endpos	unknown	$strand	$evalue	100	100	$note" >> borders/${strain}.additionalborders
+	done < <(fuzznuc -sequence $infile -pattern @${BEAV_DIR}/databases/more_T-DNA_borders.fna -rformat gff -complement -pmismatch 1 -outfile stdout | sort -k1,1 -k4,4g | grep -v '#')
+
+
 	fuzznuc --sequence bakta/"$strain".fna --pattern RTTDCAWWTGHAAY -outfile ${strain}.virbox -rformat excel --complement >> borders.log 2>&1
 	fuzznuc --sequence bakta/"$strain".fna --pattern WNGTGMARAWYTGCACDW -outfile ${strain}.trabox -rformat excel --complement >> borders.log 2>&1
 	mv ${strain}.leftborder  ./borders/${strain}.left_T-DNA_border
@@ -579,7 +606,7 @@ mv ./dif.table ./borders/
 touch borders.table
 
 if $agrobacterium_run; then
-	borderfiles="borders/${strain}.nodbox borders/${strain}.overdrive borders/${strain}.ttsbox borders/${strain}.left_T-DNA_border borders/${strain}.right_T-DNA_border"
+	borderfiles="borders/${strain}.nodbox borders/${strain}.overdrive borders/${strain}.ttsbox borders/${strain}.left_T-DNA_border borders/${strain}.right_T-DNA_border borders/${strain}.addtionalborders"
 else
 	borderfiles="borders/${strain}.nodbox borders/${strain}.ttsbox"
 fi
