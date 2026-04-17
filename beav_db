@@ -1,0 +1,162 @@
+#!/usr/bin/env bash
+if [[ -z "${BEAV_DIR}" ]]; then
+    echo -e "The BEAV_DIR variable is not set. Either activate the Beav conda environment or set the BEAV_DIR variable." 
+    exit
+fi
+update=false
+bakta_db_run=true
+light_db_run=false
+baktadbpath=""
+baktadbtype="full"
+while [ $# -gt 0 ]
+do
+        case $1 in
+                --skip_bakta_db)
+                        bakta_db_run=false
+                        ;;
+                --update)
+                        update=true
+                        ;;
+                --bakta_db_path)
+                        new_baktadbpath=$2
+                        baktadbpath=$(realpath -e $new_baktadbpath)
+                        shift
+                        ;;
+                --light)
+                        light_db_run=true
+                        if [ $light_db_run ]; then
+                                baktadbtype=light
+                        fi
+                        ;;
+                esac
+        shift
+done
+
+
+#check if bakta_db_run variable is false and if so echo skip message
+if ! $bakta_db_run; then
+        echo "Skipping Bakta database download"
+fi
+#check if bakta_db_run variable is true and download bakta database
+if $bakta_db_run; then
+        echo -e "downloading and setting up databases for dependencies"
+	echo -e ""
+        echo -e "BAKTA"
+
+
+#check if bakta db variable exists and db is downloaded
+        if [[ ! -z "$BAKTA_DB" ]] && [[ -f $BAKTA_DB/version.json ]] && [[ -z "$update" ]]; then
+        echo -e "BAKTA_DB already set and database is installed"
+        else
+        #if they only provide a type, install to baktafolder/db
+        #otherwise install to where they want it and remind to set BAKTA_DB
+                if [[ -z $baktadbpath ]] && [[ ! -z $CONDA_PREFIX  ]]; then
+                        echo -e "No bakta db path provided, defaulting to <baktadir>/db"
+                        baktadbpath="$CONDA_PREFIX/db/"
+                        if [[ ! -d $baktadbpath ]]; then
+                                mkdir $baktadbpath
+                        fi
+                        echo -e "no need to set the BAKTA_DB environment variable."
+                elif [ $baktadbpath ]; then
+                        :
+                else
+                        echo -e "no bakta db path provided and not in a conda environment."
+                        echo -e "Please activate the conda environment that beav is installed in and try again,"
+                        echo -e "or provide a path to install the bakta_db."
+                        echo -e "Dont forget to set the BAKTA_DB environment variable to point to that folder"
+                        echo -e "alternatively, provide --db <yourbaktadbpath> as an argument to bakta"
+                        exit 1
+                fi
+                echo -e "downloading bakta databases, this make take a while (30 or 3 GB)"      
+                bakta_db download --output $baktadbpath --type $baktadbtype
+        fi
+fi
+echo -e ""
+
+#macsyfinder
+echo -e "MACSYFINDER"
+macsydata install --models-dir $BEAV_DIR/models --upgrade TXSScan
+echo -e ""
+
+#defense_finder
+echo -e "DEFENSE FINDER"
+defense-finder update --models-dir $BEAV_DIR/models
+echo -e ""
+
+echo -e "ANTISMASH"
+echo -e "(This may take a while, estimated 9GB download)"
+download-antismash-databases
+echo -e ""
+
+echo -e "TIGER2"
+if [[ ! -f $BEAV_DIR/software/TIGER/db/Pfam-A.hmm ]]; then
+	echo -e "requirement Pfam-A.hmm file does not exist"
+	echo -e "Downloading and extracting Pfam-A hmms"
+	curl -L https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.hmm.gz > $BEAV_DIR/software/TIGER/db/Pfam-A.hmm.gz
+	gunzip $BEAV_DIR/software/TIGER/db/Pfam-A.hmm.gz
+else
+	echo -e "Pfam-A.hmm already exists, doing nothing."	
+fi
+
+echo -e ""
+
+echo -e "DBSCAN-SWA"
+if [[ ! -f $BEAV_DIR/software/DBSCAN-SWA/db/database/uniprot.dmnd ]]; then
+	echo -e "Downloading and extracting DBSCAN-SWA database"
+	mkdir $BEAV_DIR/software/DBSCAN-SWA/db/
+	if curl -L https://zenodo.org/records/10404224/files/db.tar.gz?download=1 > $BEAV_DIR/software/DBSCAN-SWA/db/db.tar.gz; then
+		tar -zxvf $BEAV_DIR/software/DBSCAN-SWA/db/db.tar.gz -C $BEAV_DIR/software/DBSCAN-SWA/
+		rm -f $BEAV_DIR/software/DBSCAN-SWA/db/db.tar.gz
+	else
+		echo -e "Download failed, please try again later"
+	fi
+else
+	echo -e "DBSCAN-SWA database already downloaded"
+fi
+
+echo -e ""
+
+echo -e "GAPMIND"
+#make user install PaperBLAST in BEAV_DIR/software/
+#then run script to download and format dbs
+#gapmind aa carbon and format
+
+#path_to_usearch=$(which usearch)
+#if [[ ! -x $path_to_usearch ]]; then 
+#	echo -e "Please download the usearch executable from https://www.drive5.com/usearch/download.html"
+#	echo -e "Extract this file, rename it to usearch, make it executable (chmod +x usearch) and place it in a location in your PATH before running beav"
+#	echo -e "Then re-run this setup script to format GapMind databases"
+#	exit 1
+#fi
+
+mkdir $BEAV_DIR/software/PaperBLAST/fbrowse_data
+mkdir $BEAV_DIR/software/PaperBLAST/private
+mkdir $BEAV_DIR/software/PaperBLAST/tmp
+mkdir $BEAV_DIR/software/PaperBLAST/tmp/path.aa
+mkdir $BEAV_DIR/software/PaperBLAST/tmp/path.carbon
+
+curl -sL https://papers.genomics.lbl.gov/tmp/path.aa/curated.faa > $BEAV_DIR/software/PaperBLAST/tmp/path.aa/curated.faa
+curl -sL https://papers.genomics.lbl.gov/tmp/path.aa/curated.db > $BEAV_DIR/software/PaperBLAST/tmp/path.aa/curated.db
+curl -sL https://papers.genomics.lbl.gov/tmp/path.aa/steps.db > $BEAV_DIR/software/PaperBLAST/tmp/path.aa/steps.db
+curl -sL https://papers.genomics.lbl.gov/tmp/path.carbon/curated.faa > $BEAV_DIR/software/PaperBLAST/tmp/path.carbon/curated.faa
+curl -sL https://papers.genomics.lbl.gov/tmp/path.carbon/curated.db > $BEAV_DIR/software/PaperBLAST/tmp/path.carbon/curated.db
+curl -sL https://papers.genomics.lbl.gov/tmp/path.carbon/steps.db > $BEAV_DIR/software/PaperBLAST/tmp/path.carbon/steps.db
+
+$BEAV_DIR/software/PaperBLAST/bin/extractHmms.pl $BEAV_DIR/software/PaperBLAST/tmp/path.aa/steps.db $BEAV_DIR/software/PaperBLAST/tmp/path.aa
+$BEAV_DIR/software/PaperBLAST/bin/extractHmms.pl $BEAV_DIR/software/PaperBLAST/tmp/path.carbon/steps.db $BEAV_DIR/software/PaperBLAST/tmp/path.carbon
+
+#usearch -makeudb_ublast $BEAV_DIR/software/PaperBLAST/tmp/path.aa/curated.faa -output $BEAV_DIR/software/PaperBLAST/tmp/path.aa/curated.faa.udb
+diamond makedb --in $BEAV_DIR/software/PaperBLAST/tmp/path.aa/curated.faa -d $BEAV_DIR/software/PaperBLAST/tmp/path.aa/curated.faa.dmnd
+formatdb -p T -o T -i $BEAV_DIR/software/PaperBLAST/tmp/path.aa/curated.faa
+
+#usearch -makeudb_ublast $BEAV_DIR/software/PaperBLAST/tmp/path.carbon/curated.faa -output $BEAV_DIR/software/PaperBLAST/tmp/path.carbon/curated.faa.udb
+diamond makedb --in $BEAV_DIR/software/PaperBLAST/tmp/path.carbon/curated.faa -d $BEAV_DIR/software/PaperBLAST/tmp/path.carbon/curated.faa.dmnd
+formatdb -p T -o T -i $BEAV_DIR/software/PaperBLAST/tmp/path.carbon/curated.faa
+
+echo -e ""
+
+echo -e "DONE"
+echo -e ""
+
+echo -e "Dont forget to set the BAKTA_DB environment variable to point to $baktadbpath"
+echo -e "alternatively, provide --db $baktadbpath as an argument to bakta"
