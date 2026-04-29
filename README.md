@@ -9,14 +9,14 @@
 
 **nf-core/beav**(Bacterial Element Annotation reVamped) is a bioinformatics pipeline that takes bacteria sequences, either raw fasta sequences or from genbank, and annotates them to highlight bacterial elements. The output are 3 annotated sequece files in different common formats, and a Circos plot with the annotations shown. Tools specific to agrobacterium are also optionally available.
 
-[![Beav Workflow](nf_beav_workflow.png)]
+![Beav Workflow](nf_beav_workflow.png)
 
 ## Usage
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-Step 1: Clone the beav_dir dependencies from [![weisberglab/beavDB](https://github.com/weisberglab/beavDB)] into a desired location for databases. Preferably, this will be a location with enough storage space for large databases(bakta, antiSMASH), unless you already have these databases stored somewhere else.
+Step 1: Clone the pipeline from ![weisberglab/nf-core-beav](https://github.com/weisberglab/nf-core-beav). In future versions, nf-core-beav will be integrated with nf-core and may be called directly from the command line.
 
 Step 2: Set nextflow and environment variables. Open the 'nextflow.config' file in your preferred editor and create a profile(recommended) or change the defaults for the input parameters. 
   Important parameters to note: 
