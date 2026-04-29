@@ -55,26 +55,46 @@ For more details about the output files and reports, please refer to the
 [output documentation](https://nf-co.re/beav/output).
 
 ## Features
+
 Main Pipeline
+
 BAKTA: Automatic download of Bakta database (light/full) and Bakta annotation, and automatically skip Bakta on input files detected to already be annotated by Bakta
+
 ANTISMASH: Automatic download of AntiSMASH database and AntiSMASH annotation
+
 MOBSUITE_RECON: Reconstruct plasmids in bacterial assemblies
+
 MACSYFINDER: Annotation of macromolecular systems, genetic pathways
+
 DEFENSEFINDER: Annotation of defense systems
+
 GAPMIND: Annotation of amino acid and carbon metabolism
+
 NHMMER: Annotation of structural RNAs, transposable elements, other
+
 FUZZNUC: Annotation of pip/tts/nod box
+
 BLASTN: Search and annotation of oriT, dif sites
+
 SOURMASH: Comparison to reference metagenomes
+
 TIGER: Annotation of ICEs
+
 INTEGRONFINDER: Annotation of integrons
+
 PHISPY: Annotation of prophages
+
 CIRCOS: Create a circular plot with all annotated elements
 
+
 Agro-specific Pipeline (Optional)
+
 FASTANI: Whole genome ANI computation
+
 FUZZNUC: Annotation of tra/vir box
+
 NHMMER: Annotation of T-DNA borders and Overdrive
+
 IDENTIFY_TI_RI_PLASMIDS: Identify and classify Ti and Ri plasmids and contigs
 
 ## Credits
