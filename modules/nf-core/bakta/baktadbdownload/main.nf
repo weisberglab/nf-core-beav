@@ -13,6 +13,7 @@ process BAKTA_BAKTADBDOWNLOAD {
     output:
     path "*db", emit: db
     path "versions.yml", emit: versions
+    val(true),  emit: done
 
     when:
     task.ext.when == null || task.ext.when
@@ -25,7 +26,9 @@ process BAKTA_BAKTADBDOWNLOAD {
         ${args} \\
         --type ${params.bakta_db_type} || true
 
-    mv bakta_db low_bakta_db
+    if [[ ${params.bakta_db_type} == 'light' ]]; then
+        mv db-light bakta_db
+    fi
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
