@@ -1,0 +1,10 @@
+channels:
+- conda-forge
+- bioconda
+dependencies:
+- bioconda::diamond=2.1.16
+- bioconda::perl-dbd-sqlite=1.76
+- conda-forge::curl=8.17.0
+- conda-forge::perl-dbi=1.647
+- conda-forge::perl=5.32.1
+- conda-forge::unzip=6.0

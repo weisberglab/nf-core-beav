@@ -1,0 +1,6 @@
+channels:
+- conda-forge
+- bioconda
+dependencies:
+- bioconda::biopython=1.70
+- bioconda::seqiolib=0.2.4

@@ -1,0 +1,7 @@
+channels:
+- conda-forge
+- bioconda
+dependencies:
+- conda-forge::curl=8.17.0
+- conda-forge::gcc=15.2.0
+- conda-forge::patch=2.8
