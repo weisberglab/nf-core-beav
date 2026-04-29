@@ -4,6 +4,10 @@ channels:
 - conda-forge
 - bioconda
 dependencies:
+- pip
+- pip:
+  - pkg-resources-backport==1.0.1
+- conda-forge::python=3.10.0
 - bioconda::phispy=4.2.21
 - conda-forge::biopython=1.81
 - conda-forge::setuptools=82.0.1
