@@ -5,16 +5,5 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - python=3.10
   - defense-finder=2.0.1
-  - macsyfinder=2.1.4
-  - hmmer>=3.3
-  - click>=8.0.3
-  - colorlog>=6.3.0a1
-  - pyhmmer
-  - pyrodigal
-  - numpy
-  - pandas
-  - networkx
-  - pyyaml
-  - packaging
+
