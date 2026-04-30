@@ -3,8 +3,8 @@
 channels:
   - conda-forge
   - bioconda
+  - defaults
 dependencies:
-  - biocontainers
   - python=3.10
   - defense-finder=2.0.1
   - macsyfinder=2.1.4
