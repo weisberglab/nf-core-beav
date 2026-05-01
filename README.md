@@ -16,10 +16,34 @@
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-Step 1: Clone the pipeline from ![weisberglab/nf-core-beav](https://github.com/weisberglab/nf-core-beav). In future versions, nf-core-beav will be integrated with nf-core and may be called directly from the command line.
+If you are using Windows, please set up a Linux distribution with the following steps. Otherwise, skip to the LINUX/UNIX TERMINAL section.
+
+Step 1: Make sure you have at least 5GB of storage. Open Windows powershell and run:
+```
+wsl --install
+wsl.exe --install Ubuntu
+```
+Follow the instructions to create a user account and password for the Linux distribution.
+
+Step 2: Start the distribution. Using the ~ indicator will place you in the home directory:
+```
+wsl ~
+```
+Step 3: Install miniconda3 via the following commands:
+```
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+```
+Follow its prompts to complete setup.
+
+Step 4: Proceed to the next section to set up Beav.
+
+### FROM LINUX/UNIX TERMINAL
+Step 1: Clone the pipeline from [weisberglab/nf-core-beav](https://github.com/weisberglab/nf-core-beav). In future versions, nf-core-beav will be integrated with nf-core and may be called directly from the command line.
 
 Step 2: Set nextflow and environment variables. Open the 'nextflow.config' file in your preferred editor and create a profile(recommended) or change the defaults for the input parameters. 
   Important parameters to note: 
+  
     input: directory of files, single file, comma-delimited list of files (default: ./inputFiles)
     outdir: directory where results are stored (default: ./results)
     beav_dir: directory where databases are stored (default: ./beav_dir)
@@ -29,7 +53,9 @@ Step 2: Set nextflow and environment variables. Open the 'nextflow.config' file 
     operon_email: an email for operon mapper results to be sent to (default: none)
     agro/agrobacterium: a flag that runs the agrobacterium specific pipeline (default: false)
 
-Step 3: Install dependencies. It is recommended to use a conda environment. The pipeline SHOULD be able to use either conda or singularity/apptainer to run its modules, so choose one or the other. Execute this command inside the directory containing the pipeline(where the beav_env.yml file is stored). 
+More information on setting up Nextflow can be found in the link contained in the note at the beginning of this Usage section.
+
+Step 3: Install dependencies. It is recommended to use a conda environment. The pipeline SHOULD be able to use either conda or singularity/apptainer to run its modules, so choose one or the other. Execute this command inside the directory containing the pipeline(where the beav_env.yml file is stored) if you choose to run the pipeline with Conda. 
  ```bash
  cd /path/to/nf-core-beav
  conda env create -n beav_env -f beav_env.yml
