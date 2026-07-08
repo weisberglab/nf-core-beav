@@ -51,6 +51,7 @@ process TIGER_TIGER {
     echo "Onto parsing output."
 
     # Parse output
+    set +u
     declare -A aatable
     aatable=( ["C"]="Cys" 
             ["D"]="Asp"
