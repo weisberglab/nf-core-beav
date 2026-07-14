@@ -182,7 +182,7 @@ def all_contig_circos(gbk_file, onco_label):
     seqid2features = gbk.get_seqid2features(feature_type=None)
 
 
-    circos = Circos(seqid2size, min(1.0, 150.0/len(seqid2size)), start=15, end=345)
+    circos = Circos(seqid2size, space=min(1.0, 150.0/len(seqid2size)), start=15, end=345)
 
     intPresent = 0 # status will change if integron is present
     plasmidPresent = 0 # status will change if plasmid is present
