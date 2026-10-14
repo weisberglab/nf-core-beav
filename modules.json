@@ -4,7 +4,68 @@
     "repos": {
         "https://github.com/nf-core/modules.git": {
             "modules": {
-                "nf-core": {}
+                "nf-core": {
+                    "antismash/antismash": {
+                        "branch": "master",
+                        "git_sha": "21e4662ae927fdbc5fc04eec9bde38b0689d4954",
+                        "installed_by": ["modules"]
+                    },
+                    "antismash/antismashdownloaddatabases": {
+                        "branch": "master",
+                        "git_sha": "21e4662ae927fdbc5fc04eec9bde38b0689d4954",
+                        "installed_by": ["modules"]
+                    },
+                    "bakta/bakta": {
+                        "branch": "master",
+                        "git_sha": "2080397432fcb0d079121dbacf22ce42ef175cec",
+                        "installed_by": ["modules"]
+                    },
+                    "bakta/baktadbdownload": {
+                        "branch": "master",
+                        "git_sha": "81fe5e6f07fa92ecfd1721373620e2538a1466eb",
+                        "installed_by": ["modules"]
+                    },
+                    "blast/blastn": {
+                        "branch": "master",
+                        "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
+                        "installed_by": ["modules"]
+                    },
+                    "fastani": {
+                        "branch": "master",
+                        "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
+                        "installed_by": ["modules"]
+                    },
+                    "hmmer/hmmsearch": {
+                        "branch": "master",
+                        "git_sha": "3a42d4fbb69436f53e0f06d2fe65b48f9d0085cc",
+                        "installed_by": ["modules"]
+                    },
+                    "integronfinder": {
+                        "branch": "master",
+                        "git_sha": "f3cdfac60a5c7e23f72c5b211c50218277073c8b",
+                        "installed_by": ["modules"]
+                    },
+                    "mobsuite/recon": {
+                        "branch": "master",
+                        "git_sha": "95868cc6a5a108bda21f045e95f5fb1aa2258ede",
+                        "installed_by": ["modules"]
+                    },
+                    "phispy": {
+                        "branch": "master",
+                        "git_sha": "3c163b2f38b46457927aebd262409c4d5eebd1b8",
+                        "installed_by": ["modules"]
+                    },
+                    "sourmash/compare": {
+                        "branch": "master",
+                        "git_sha": "6eaecd6ef9bfc7faf313b1abeaae9b129795291d",
+                        "installed_by": ["modules"]
+                    },
+                    "sourmash/sketch": {
+                        "branch": "master",
+                        "git_sha": "c98a14d32fc13603d68be1d16d3214e17a4404a0",
+                        "installed_by": ["modules"]
+                    }
+                }
             },
             "subworkflows": {
                 "nf-core": {

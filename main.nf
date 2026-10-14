@@ -30,7 +30,7 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_beav
 workflow NFCORE_BEAV {
 
     take:
-    samplesheet // channel: samplesheet read in from --input
+    input // channel: input read in from --input
 
     main:
 
@@ -38,8 +38,7 @@ workflow NFCORE_BEAV {
     // WORKFLOW: Run pipeline
     //
     BEAV (
-        samplesheet,
-        params.outdir,
+        input
     )
 }
 /*
@@ -60,10 +59,7 @@ workflow {
         params.monochrome_logs,
         args,
         params.outdir,
-        params.input,
-        params.help,
-        params.help_full,
-        params.show_hidden
+        params.input
     )
 
     //
@@ -72,6 +68,7 @@ workflow {
     NFCORE_BEAV (
         PIPELINE_INITIALISATION.out.samplesheet
     )
+    
     //
     // SUBWORKFLOW: Run completion tasks
     //
@@ -81,6 +78,7 @@ workflow {
         params.plaintext_email,
         params.outdir,
         params.monochrome_logs,
+        params.hook_url
     )
 }
 

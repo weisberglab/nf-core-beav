@@ -3,9 +3,15 @@
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-include { paramsSummaryMap       } from 'plugin/nf-schema'
-include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
-include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_beav_pipeline'
+
+
+include { preCheckInstall              } from '../subworkflows/local/precheckinstall/main.nf'
+
+include { softwareVersionsToYAML        } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+include { methodsDescriptionText        } from '../subworkflows/local/utils_nfcore_beav_pipeline'
+include { fileParser                    } from '../subworkflows/local/file_parser'
+
+include { ANNOTATEBACTERIALASSEMBLY     } from '../subworkflows/local/annotatebacterialassembly/main.nf'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -16,43 +22,65 @@ include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_beav
 workflow BEAV {
 
     take:
-    ch_samplesheet // channel: samplesheet read in from --input
-    outdir
+    ch_input // channel: input file or files from --input
 
     main:
+    ch_versions = channel.empty()
 
-    def ch_versions = channel.empty()
+    // Check the models, databases, and other dependencies
+    precheck            = preCheckInstall(channel.fromPath("${params.beav_dir}"))
+    ch_bakta_db_dl      = precheck.ch_bakta_db_dl
+    ch_antismash_db_dl  = precheck.ch_antismash_db_dl
+    df_db               = precheck.df_db
+    mf_db               = precheck.mf_db
+    gap_db              = precheck.gap_db
+    t_db                = precheck.t_db
+
+    //
+    // Parse input to separate into genbank and fasta files
+    //
+    ch_parsed       = fileParser(ch_input)
+    ch_bakta_input  = ch_parsed.ch_meta_needsbakta
+    ch_meta_gbff    = ch_parsed.ch_meta_genbank
+    ch_meta_fasta   = ch_parsed.ch_meta_fasta
+    ch_meta_gff     = ch_parsed.ch_meta_gff
+    ch_meta_faa     = ch_parsed.ch_meta_faa
+    ch_meta_ffn     = ch_parsed.ch_meta_ffn
+    ch_tiger_tuple  = channel.empty()
+    ch_tiger_tuple  = ch_tiger_tuple.mix(ch_meta_fasta, ch_meta_gff, ch_meta_faa).groupTuple().map{ meta, files -> tuple(meta, files[0], files[1], files[2]) }
+    ch_filecount    = ch_parsed.ch_filecount
+
+    ANNOTATEBACTERIALASSEMBLY(
+        ch_bakta_input,
+        ch_bakta_db_dl,
+        ch_meta_gbff,
+        ch_meta_gff,
+        ch_meta_fasta,
+        ch_meta_faa,
+        ch_meta_ffn,
+        ch_antismash_db_dl,
+        df_db,
+        mf_db,
+        gap_db,
+        ch_tiger_tuple,
+        t_db,
+        ch_filecount
+    )
 
     //
     // Collate and save software versions
     //
-    def topic_versions = channel.topic("versions")
-        .distinct()
-        .branch { entry ->
-            versions_file: entry instanceof Path
-            versions_tuple: true
-        }
-
-    def topic_versions_string = topic_versions.versions_tuple
-        .map { process, tool, version ->
-            [ process[process.lastIndexOf(':')+1..-1], "  ${tool}: ${version}" ]
-        }
-        .groupTuple(by:0)
-        .map { process, tool_versions ->
-            tool_versions.unique().sort()
-            "${process}:\n${tool_versions.join('\n')}"
-        }
-
-    def ch_collated_versions = softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
-        .mix(topic_versions_string)
+    softwareVersionsToYAML(ch_versions)
         .collectFile(
-            storeDir: "${outdir}/pipeline_info",
+            storeDir: "${params.outdir}/pipeline_info",
             name: 'nf_core_'  +  'beav_software_'  + 'versions.yml',
             sort: true,
             newLine: true
-        )
+        ).set { ch_collated_versions }
+
     emit:
-    versions       = ch_versions                 // channel: [ path(versions.yml) ]
+    versions       = ch_collated_versions                 // channel: [ path(versions.yml) ]
+
 }
 
 /*

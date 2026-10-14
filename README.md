@@ -21,49 +21,68 @@
 
 ## Introduction
 
-**nf-core/beav** is a bioinformatics pipeline that ...
+**nf-core/beav**(Bacterial Element Annotation reVamped) is a bioinformatics pipeline that takes bacterial sequences, either raw fasta sequences or from genbank, and annotates them to highlight bacterial elements. The output are 3 annotated sequence files in different common formats, and a Circos plot with the annotations shown. Tools specific to agrobacterium are also optionally available.
 
-<!-- TODO nf-core:
-   Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
-   major pipeline sections and the types of output it produces. You're giving an overview to someone new
-   to nf-core here, in 15-20 seconds. For an example, see https://github.com/nf-core/rnaseq/blob/master/README.md#introduction
--->
-
-<!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
-     workflows use the "tube map" design for that. See https://nf-co.re/docs/community/brand/workflow-schematics#examples for examples.   -->
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->
+![Beav Workflow](nf_beav_workflow.png)
 
 ## Usage
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/get_started/environment_setup/overview) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/get_started/run-your-first-pipeline) with `-profile test` before running the workflow on actual data.
 
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
+### FROM WINDOWS 10/11
+If you are using Windows, please set up a Linux distribution with the following steps. Otherwise, skip to the LINUX/UNIX TERMINAL section.
 
-First, prepare a samplesheet with your input data that looks as follows:
-
-`samplesheet.csv`:
-
-```csv
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+Step 1: Make sure you have at least 5GB of storage. Open Windows powershell and run:
 ```
-
-Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
-
--->
-
-Now, you can run the pipeline using:
-
-<!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
-
-```bash
-nextflow run nf-core/beav \
-   -profile <docker/singularity/.../institute> \
-   --input samplesheet.csv \
-   --outdir <OUTDIR>
+wsl --install
+wsl.exe --install Ubuntu
 ```
+Follow the instructions to create a user account and password for the Linux distribution.
+
+Step 2: Start the distribution. Using the ~ indicator will place you in the home directory:
+```
+wsl ~
+```
+Step 3: Install miniconda3 via the following commands:
+```
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+```
+Follow its prompts to complete setup.
+
+Step 4: Proceed to the next section to set up Beav.
+
+### FROM LINUX/UNIX TERMINAL
+Step 1: Clone the pipeline from [weisberglab/nf-core-beav](https://github.com/weisberglab/nf-core-beav). In future versions, nf-core-beav will be integrated with nf-core and may be called directly from the command line.
+
+Step 2: Set nextflow and environment variables. Open the 'nextflow.config' file in your preferred editor and create a profile(recommended) or change the defaults for the input parameters. 
+  Important parameters to note: 
+  
+    input: directory of files, single file, comma-delimited list of files (default: ./inputFiles)
+    outdir: directory where results are stored (default: ./results)
+    beav_dir: directory where databases are stored (default: ./beav_dir)
+    bakta_db: directory where your bakta database is stored, if already downloaded (default: auto downloads to ./beav_dir)
+    antismash_db: directory where your antiSMASH database is stored, if already downloaded (default: auto downloads to ./beav_dir)
+    tiger_blast_db: location of a fasta file containing BLAST database information for TIGER to confirm ICE insertions (required, NO DEFAULT)
+    operon_email: an email for operon mapper results to be sent to (default: none)
+    agro/agrobacterium: a flag that runs the agrobacterium specific pipeline (default: false)
+
+More information on setting up Nextflow can be found in the link contained in the note at the beginning of this Usage section.
+
+Step 3: Install dependencies. It is recommended to use a conda environment. The pipeline SHOULD be able to use either conda or singularity/apptainer to run its modules, so choose one or the other. Execute this command inside the directory containing the pipeline(where the beav_env.yml file is stored) if you choose to run the pipeline with Conda. 
+ ```bash
+ cd /path/to/nf-core-beav
+ conda env create -n beav_env -f beav_env.yml
+ ```
+
+Step 4: Run the pipeline. It will automatically set up and download any databases you did not include in the parameters. Note that --input may be a PATH to a single file, a directory containing files(depth 1, automatically ignores unrelated files), or a comma-delimited list of files.
+  ```bash
+  nextflow run nf-core/beav \
+    -profile <YOUR_PROFILE> \
+    --input <samplesheet.csv || sample.fna,sample2.fna || directory_of_samples> \
+    --outdir <OUTDIR>
+  ```
 
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/running/run-pipelines#using-parameter-files).
@@ -72,17 +91,65 @@ For more details and further functionality, please refer to the [usage documenta
 
 ## Pipeline output
 
+
 To see the results of an example test run with a full size dataset refer to the [results](https://nf-co.re/beav/results) tab on the nf-core website pipeline page.
 For more details about the output files and reports, please refer to the
 [output documentation](https://nf-co.re/beav/output).
 
+## Features
+
+Main Pipeline
+
+BAKTA: Automatic download of Bakta database (light/full) and Bakta annotation, and automatically skip Bakta on input files detected to already be annotated by Bakta
+
+ANTISMASH: Automatic download of AntiSMASH database and AntiSMASH annotation
+
+MOBSUITE_RECON: Reconstruct plasmids in bacterial assemblies
+
+MACSYFINDER: Annotation of macromolecular systems, genetic pathways
+
+DEFENSEFINDER: Annotation of defense systems
+
+GAPMIND: Annotation of amino acid and carbon metabolism
+
+NHMMER: Annotation of structural RNAs, transposable elements, other
+
+FUZZNUC: Annotation of pip/tts/nod box
+
+BLASTN: Search and annotation of oriT, dif sites
+
+SOURMASH: Comparison to reference metagenomes
+
+TIGER: Annotation of ICEs
+
+INTEGRONFINDER: Annotation of integrons
+
+PHISPY: Annotation of prophages
+
+CIRCOS: Create a circular plot with all annotated elements
+
+
+Agro-specific Pipeline (Optional)
+
+FASTANI: Whole genome ANI computation
+
+FUZZNUC: Annotation of tra/vir box
+
+NHMMER: Annotation of T-DNA borders and Overdrive
+
+IDENTIFY_TI_RI_PLASMIDS: Identify and classify Ti and Ri plasmids and contigs
+
 ## Credits
 
-nf-core/beav was originally written by amnalert, jewell-bug, acarafat, alexweisberg.
+nf-core/beav was originally written by @amnalert, @jewell-bug, @acarafat, and @alexweisberg.
 
 We thank the following people for their extensive assistance in the development of this pipeline:
 
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
+  Alexandra Weisberg
+  Arafat Rahman
+  Jewell Jung
+  The Oregon State University Center for Qualitative Life Sciences Team
+  The Nextflow and nf-core community
 
 ## Contributions and Support
 

@@ -1,0 +1,16 @@
+channels:
+- conda-forge
+- bioconda
+dependencies:
+- bioconda::diamond=2.1.16
+- bioconda::hmmer=3.4
+- bioconda::perl-cgi=4.71
+- bioconda::perl-dbd-sqlite=1.76
+- bioconda::perl-json=4.10
+- bioconda::perl-libwww-perl=6.81
+- bioconda::perl-xml-libxml=2.0210
+- bioconda::perl-xml-simple=2.25
+- conda-forge::curl=8.17.0
+- conda-forge::perl-dbi=1.647
+- conda-forge::perl=5.32.1
+- conda-forge::unzip=6.0

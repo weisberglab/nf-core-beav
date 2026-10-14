@@ -1,0 +1,12 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/environment-schema.json
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - macsyfinder=2.1.3
+  - hmmer>=3.3
+  - biopython
+  - pandas
+  - requests
+  - python=3.10

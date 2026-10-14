@@ -1,0 +1,11 @@
+channels:
+- conda-forge
+- bioconda
+dependencies:
+- bioconda::bcbio-gff=0.7.1
+- conda-forge::pandas=2.3.3
+- conda-forge::pip=25.3
+- pip
+- pip:
+  - biopython==1.86
+  - ordereddict==1.1
