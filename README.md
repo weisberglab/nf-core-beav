@@ -23,7 +23,7 @@
 
 **nf-core/beav**(Bacterial Element Annotation reVamped) is a bioinformatics pipeline that takes bacterial sequences, either raw fasta sequences or from genbank, and annotates them to highlight bacterial elements. The output are 3 annotated sequence files in different common formats, and a Circos plot with the annotations shown. Tools specific to agrobacterium are also optionally available.
 
-![Beav Workflow](nf_beav_workflow.png)
+![Beav Workflow](docs/images/nf-core-beav_workflow.png)
 
 ## Usage
 
