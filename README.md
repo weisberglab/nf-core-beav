@@ -91,6 +91,7 @@ For more details and further functionality, please refer to the [usage documenta
 
 ## Pipeline output
 
+The pipeline outputs to the --outdir \[out/path/meta_id/\], and provides a circos plot in pdf/png formats, as well as the annotated faa, ffn, and gbk files, and a summary of annotations in an html file. If the --agrobacterium/--agro pipeline was run, there will also be a circos plot of oncogenes in pdf/png formats.
 
 To see the results of an example test run with a full size dataset refer to the [results](https://nf-co.re/beav/results) tab on the nf-core website pipeline page.
 For more details about the output files and reports, please refer to the
