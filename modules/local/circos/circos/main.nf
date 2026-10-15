@@ -3,9 +3,11 @@ process CIRCOS_CIRCOS {
     publishDir "${params.outdir}", mode: 'copy', saveAs: { filename -> "${meta.id}_results/circos_plots/${filename}" }
     label 'process_medium'
 
-    container "oras://community.wave.seqera.io/library/biopython_matplotlib_numpy_pycirclize_python:e2d6ec959830e694"
     conda "${moduleDir}/environment.yml"
-
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/f7/f73e93951b29b989290b9fde2a81118fa27f8ac7c54be4fbe85b17962c5b1c48/data'
+        : 'community.wave.seqera.io/library/biopython_matplotlib_numpy_pycirclize_python:396245bd8e6cd08c'}"
+        
     input:
     tuple val(meta), path('*')
 

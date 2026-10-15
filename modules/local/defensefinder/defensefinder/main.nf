@@ -2,8 +2,10 @@ process DEFENSEFINDER_DEFENSEFINDER {
     tag "${meta.id}"
     label 'process_medium'
 
-    container "quay.io/biocontainers/defense-finder:2.0.1--pyhdfd78af_0"
     conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/1d/1d9f21eaec6d6273b80db8ab82bba360ddfe6fdc647d44814032323f671496bd/data'
+        : 'community.wave.seqera.io/library/defense-finder_python:9760d1f62683751b'}"
 
     input:
     tuple val(meta), path(faa)

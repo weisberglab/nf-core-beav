@@ -3,7 +3,6 @@
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
-  - defense-finder=2.0.1
-
+  - conda-forge::python==3.12
+  - bioconda::defense-finder=2.0.1

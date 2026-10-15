@@ -5,6 +5,9 @@ process COMBINE_ANNOTATIONS{
 
     container "oras://community.wave.seqera.io/library/bcbio-gff_pip_biopython:1c8350bea1249708"
     conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/2b/2be8499aa13022e26a5a384cb9814a05dbdcf65aaa71b426868360ceb3642b23/data'
+        : 'community.wave.seqera.io/library/bcbio-gff_biopython_python:561e3dd21c10e429'}"
 
     input:
     tuple val(meta), path('*')

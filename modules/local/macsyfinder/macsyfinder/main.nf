@@ -2,8 +2,10 @@ process MACSYFINDER_MACSYFINDER {
     tag "${meta.id}"
     label 'process_medium'
 
-    container "oras://community.wave.seqera.io/library/macsyfinder:2.1.6--2680ae6a2ec885f7"
     conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/28/28cd67a8ad35c2b4cbade5bc2e5533ab7ad3dc39843d5c6e8dd54d84518055c2/data'
+        : 'community.wave.seqera.io/library/macsyfinder_biopython_pandas_python_requests:1cfad224e5c82c97'}"
 
     input:
     tuple val(meta), path(faa)

@@ -1,6 +1,11 @@
 process PRECHECK_INSTALL{
     publishDir "${params.beav_dir}", mode: 'copy'
 
+    conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/d1/d1c10eb0e3654df8319ee582a6942f20a8b16c135b8662da53372f14ab57a79e/data'
+        : 'community.wave.seqera.io/library/git:2.56.0--fe46a1319dd3d7e5'}"
+
     input:
     path(local)
 
@@ -14,6 +19,7 @@ process PRECHECK_INSTALL{
     path("more_T-DNA_borders.fna")
     path("oriT_db.fna")
     path("tiger.patch2")
+    tuple val("${task.process}"), val('git'), eval("git -v 2>&1 | head -n 1"), emit: versions_git, topic: versions
 
     script:
     """

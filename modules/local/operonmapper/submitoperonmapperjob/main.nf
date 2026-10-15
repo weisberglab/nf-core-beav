@@ -3,8 +3,10 @@ process OPERONMAPPER_SUBMITOPERONMAPPERJOB {
     tag "${meta.id}"
     label 'process_medium'
 
-    container "oras://community.wave.seqera.io/library/curl_requests:e1dc553ba087bf18"
     conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/f9/f9c2aab0ba174656db8a07a2edb7c58f556517479c923e8dd9c0ad85cfed8bd0/data'
+        : 'community.wave.seqera.io/library/curl_requests:5a09b2f2f4607180'}"
 
     input:
     tuple val(meta), path('*')

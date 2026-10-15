@@ -2,8 +2,10 @@ process IDENTIFY_VGRG_CLUSTERS{
     label 'process_medium'
     tag "$meta.id"
 
-    container "oras://community.wave.seqera.io/library/hmmer:3.4--776668bdf0589c68"
     conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/b8/b8b4efa6c2c522efe4d22e40442633ba856be1fb76c57ef4d4babc354ce0e25f/data'
+        : 'community.wave.seqera.io/library/hmmer:3.4--d7d2e4a8148ee73e'}"
 
     input:
     tuple val(meta), path('*')

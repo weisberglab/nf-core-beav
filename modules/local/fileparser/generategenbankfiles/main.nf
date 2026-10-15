@@ -2,8 +2,10 @@ process GENERATE_GENBANK_FILES{
     tag "${meta.id}"
     label 'process_medium'
 
-    container "oras://community.wave.seqera.io/library/bcbio-gff_biopython:43dd3826ecc32a41"
     conda "${moduleDir}/environment.yml"
+    container  "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/4d/4d6e90bd04c20c06444bb31e12ea0ddf4586995f3e62516ba1cb799c2f255938/data'
+        : 'community.wave.seqera.io/library/bcbio-gff_biopython:42103105d17254ac'}"
 
     input:
     tuple val(meta), path(input), val(state)
@@ -17,6 +19,7 @@ process GENERATE_GENBANK_FILES{
     tuple val(meta), path("${meta.id}.ffn")   , emit: ffn, optional: true
     tuple val(meta), path("${meta.id}_B.fna") , emit: fnaB, optional: true
     tuple val("${task.process}"), val('biopython'), eval("python -c 'import Bio; print(Bio.__version__)'"), emit: versions_biopython, topic: versions
+    tuple val("${task.process}"), val('bcbio-gff'), eval("python -c 'from importlib.metadata import version; print(version(\"bcbio-gff\"))'"), emit: versions_bcbio_gff, topic: versions
 
     script:
     prefix   = task.ext.prefix ?: "${meta.id}"

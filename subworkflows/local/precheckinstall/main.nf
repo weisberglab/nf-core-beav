@@ -1,7 +1,7 @@
 include { PRECHECK_INSTALL                      } from '../../../modules/local/fileparser/precheckinstall/main.nf'
 include { ANTISMASH_ANTISMASHDOWNLOADDATABASES  } from '../../../modules/nf-core/antismash/antismashdownloaddatabases/main.nf'
 include { BAKTA_BAKTADBDOWNLOAD                 } from '../../../modules/nf-core/bakta/baktadbdownload/main.nf'
-include { PREPARE_GAPMIND                       } from '../../../modules/local/fileparser/getgapminddatabases/main.nf'
+include { PREPARE_GAPMIND                       } from '../../../modules/local/gapmind/getgapminddatabases/main.nf'
 include { TIGER_CLONETIGER                      } from '../../../modules/local/tiger/clonetiger/main.nf'
 include { DL_TXSS_PAPBLAST                      } from '../../../modules/local/defensefinder/downloaddfdb/main.nf'
 include { DL_MACSY_DB                           } from '../../../modules/local/macsyfinder/downloadmfdb/main.nf'

@@ -2,8 +2,10 @@ process GAPMIND_GAPMIND{
     tag "${meta.id}"
     label 'process_medium'
 
-    container "oras://community.wave.seqera.io/library/diamond_hmmer_perl-cgi_perl-dbd-sqlite_pruned:35ce1c65a30cd549"
     conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/b9/b91c3dd92a0d11fa6cf48d1858f8ee3c43c5b1ec3318dfd039ad5377f6d22600/data'
+        : 'community.wave.seqera.io/library/diamond_hmmer_perl-cgi_perl-dbd-sqlite_pruned:5574f2f672ca6f8e'}"
 
     input:
     tuple val(meta), path(faa)

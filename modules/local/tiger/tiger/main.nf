@@ -3,7 +3,9 @@ process TIGER_TIGER {
     label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
-    container 'oras://community.wave.seqera.io/library/aragorn_bedtools_blast_hmmer_pruned:419f84dd344e8c0c'
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/e2/e218e1f97b10be5bf054fc8d8793eb3fe8061a1cac7626a12d7c0cf989765a90/data'
+        : 'community.wave.seqera.io/library/aragorn_bedtools_blast_hmmer_pruned:6e079115f3124877'}"
 
     input:
     tuple val(meta), path(fna), path(gff3), path(faa)
@@ -12,7 +14,7 @@ process TIGER_TIGER {
 
     output:
     tuple val(meta), path("${prefix}_TIGER2_final.table.out") , emit: table
-    path "versions.yml"                                       , emit: versions
+    tuple val("${task.process}"), val('tiger2'), eval("perl ../${tigerdb}/bin/tiger.pl -version 2>&1 | head -n 1"), emit: versions_tiger, topic: versions
 
     script:
     prefix   = task.ext.prefix ?: "${meta.id}"

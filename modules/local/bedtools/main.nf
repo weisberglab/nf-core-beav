@@ -5,9 +5,8 @@ process BEDTOOLS {
     // TODO nf-core: See section in main README for further information regarding finding and adding container addresses to the section below.
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://galaxyproject.org' :
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/2c/2cb27be9b55640ce5717c51a6a6bf79b7945d06eab425f0616d46251b4236e9e/data' :
         'biocontainers/bedtools:2.31.1--hf5e1c6e_0' }"
-
 
     input:
     tuple val(meta), path(oriT), path(dif)

@@ -2,8 +2,10 @@ process IDENTIFY_TI_RI_PLASMIDS{
     tag "${meta.id}"
     label 'process_medium'
 
-    container "oras://community.wave.seqera.io/library/bbmap_git:2fc3d4caccbdba08"
     conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/b9/b92c5c032ac1c984989d55961b10cf433e3714025a11b3e4098b280554d29071/data'
+        : 'community.wave.seqera.io/library/bbmap_git:89e26463225aff2a'}"
 
     input:
     tuple val(meta), path(fna)

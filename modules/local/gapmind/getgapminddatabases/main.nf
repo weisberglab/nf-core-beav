@@ -3,8 +3,10 @@ process PREPARE_GAPMIND{
 
     publishDir "${params.beav_dir}/databases", mode: 'copy'
 
-    container "oras://community.wave.seqera.io/library/diamond_perl-dbd-sqlite_curl_perl-dbi_pruned:597d98710e7c495e"
     conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/71/71acd7329cfc1960bac05e76a03a06542d045722bf5f1da58f16193a87442105/data'
+        : 'community.wave.seqera.io/library/diamond_perl-dbd-sqlite_curl_perl-dbi_pruned:d31aa46e07fc4ce2'}"
 
     output:
     path("PaperBLAST_db"),  emit: papb

@@ -2,10 +2,10 @@ process HMMER_NHMMER {
     tag "${meta.id}"
     label 'process_medium'
 
+    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/hmmer:3.4--hdbdd923_1' :
         'biocontainers/hmmer:3.4--hdbdd923_1' }"
-    conda "${moduleDir}/environment.yml"
 
     input:
     tuple val(meta), path(fna)

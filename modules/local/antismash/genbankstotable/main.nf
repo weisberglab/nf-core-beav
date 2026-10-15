@@ -2,8 +2,10 @@ process ANTISMASH_GENBANKS_TO_TABLE{
     tag "${meta.id}"
     label 'process_medium'
 
-    container "oras://community.wave.seqera.io/library/bcbio-gff_pandas_pip_biopython_ordereddict:f4b3ca75388bef64"
     conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/d2/d2d3eba6847e7557f2bab7036d5fded8ed378c793537befe41292b3f5460b238/data'
+        : 'community.wave.seqera.io/library/bcbio-gff_pandas_pip_biopython_ordereddict:45cd2708ad27a01c'}"
 
     input:
     tuple val(meta), path(gbk_results_files)

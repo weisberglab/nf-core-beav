@@ -2,8 +2,10 @@ process TIGER_CLONETIGER{
     
     publishDir "${params.beav_dir}", mode: 'copy'
 
-    container "oras://community.wave.seqera.io/library/curl_gcc_patch:84930b7881d83ff8"
     conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/42/428eaf918f63e696914ec3236735092b18b0f0c128da16a5cc7ae67dd0b1f44c/data'
+        : 'community.wave.seqera.io/library/curl_gcc_patch:3dd8a0cb75380c43'}"
 
     input:
     path(patch)

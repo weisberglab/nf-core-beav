@@ -3,4 +3,4 @@ channels:
 - bioconda
 dependencies:
 - bioconda::bcbio-gff=0.7.1
-- bioconda::biopython=1.70
+- conda-forge::biopython=1.88

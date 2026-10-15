@@ -2,8 +2,10 @@ process FUZZNUC_MAIN_ELEMENTS{
     tag "${meta.id}"
     label 'process_medium'
 
-    container "oras://community.wave.seqera.io/library/emboss:6.6.0--b0e4491212918760"
     conda "${moduleDir}/environment.yml"
+    container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container
+        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/9f/9fcdd5921624b710ea0bb44aa993a61fc155f48a54405d43f06d14182f555bdb/data'
+        : 'community.wave.seqera.io/library/emboss:6.6.0--7c22912b8529a6a5'}"
 
     input:
     tuple val(meta), path(fna)
